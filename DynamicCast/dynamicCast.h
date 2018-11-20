@@ -8,16 +8,19 @@ namespace dynamicCast {
 	#define RTTI_CLASS(className) \
 		class className :
 
+	#define RTTI_NOT_CASTING_PARENT(modifier, className, nextPart) \
+		modifier className, \
+		nextPart \
+
 	#define RTTI_PARENT(className, nextPart) \
-		RTTI_PARENT_U(className, false, nextPart)
-
-	#define RTTI_VIRTUAL_PARENT(className, nextPart) \
-		RTTI_PARENT_U(className, true, nextPart)
-
-	#define RTTI_PARENT_U(className, isInheritedVirtually, nextPart) \
 		public className, \
 		nextPart \
-		parents.push_back({typeid(className).name(), isInheritedVirtually, getOffset<className>(this)});
+		parents.push_back({typeid(className).name(), false, getOffset<className>(this)});
+
+	#define RTTI_VIRTUAL_PARENT(className, nextPart) \
+		public virtual className, \
+		nextPart \
+		parents.push_back({typeid(className).name(), true, getOffset<className>(this)});		
 
 	#define RTTI_PARENTS_LIST_END \
 		public virtual DynamicCastBaseClass { \
