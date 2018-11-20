@@ -3,6 +3,8 @@
 
 namespace dynamicCast {
 
+	typedef VirtualTable::ClassesRelationship vtcr;
+
 	template<class T1, class T2>
 	T1* my_dynamic_cast(T2* ptr) {
 
@@ -10,7 +12,21 @@ namespace dynamicCast {
 			return (T1*) nullptr;
 		}
 		
-		VirtualTable::ClassesRelationship vtcr = VirtualTable::getRelationship(ptr->getTypeName(), typeid(T1).name());
+		vtcr relationship = VirtualTable::getRelationship(ptr->getTypeName(), typeid(T1).name());
+
+		switch (relationship.state) {
+			case vtcr::SAME:
+				return (T1*) ptr;
+				break;
+			case vtcr::PARENT:
+			case vtcr::VIRTUAL_PARENT:
+				return reinterpret_cast<T1*>(reinterpret_cast<char*>(ptr) - relationship.offset);
+				break;
+		}
+
+		relationship = VirtualTable::getRelationship(typeid(T1).name(), ptr->getTypeName());
+
+		//
 	}
 
 
