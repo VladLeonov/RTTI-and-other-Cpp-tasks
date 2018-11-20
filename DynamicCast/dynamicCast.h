@@ -5,6 +5,31 @@
 
 namespace dynamicCast {
 
+	#define RTTI_CLASS(className) \
+		class className :
+
+	#define RTTI_PARENT(className, nextPart) \
+		RTTI_PARENT_U(className, false, nextPart)
+
+	#define RTTI_VIRTUAL_PARENT(className, nextPart) \
+		RTTI_PARENT_U(className, true, nextPart)
+
+	#define RTTI_PARENT_U(className, isInheritedVirtually, nextPart) \
+		public className, \
+		nextPart \
+		parents.push_back({typeid(className).name(), isInheritedVirtually, getOffset<className>(this)});
+
+	#define RTTI_PARENTS_LIST_END \
+		public virtual DynamicCastBaseClass { \
+		public: \
+			void registerClass() { \
+				list<ClassParentData> parents = {}; \
+
+	#define RTTI_CLASS_END \
+				VirtualTable::registerClass(typeid(*this).name(), parents); \
+			} \
+		private:
+
 	using namespace std;
 
 	class DynamicCastBaseClass {
@@ -48,9 +73,8 @@ namespace dynamicCast {
 
 
 	template<class base, class derivative>
-	size_t getOffset() {
-		derivative obj;
-		return reinterpret_cast<char*>(static_cast<base*>(&obj)) - reinterpret_cast<char*>(&obj);
+	size_t getOffset(derivative *obj) {
+		return reinterpret_cast<char*>(static_cast<base*>(obj)) - reinterpret_cast<char*>(obj);
 	}
 
 
