@@ -33,7 +33,7 @@ namespace dynamicCast {
 			}
 
 			if (relationshipBuffer.state == vtcr::NOT_RELATIONSHIP) {
-				relationshipBuffer.state = parentRelationship.state;
+				relationshipBuffer = parentRelationship;
 			}
 
 			if (relationshipBuffer.state == vtcr::AMBIGUOUS) {
