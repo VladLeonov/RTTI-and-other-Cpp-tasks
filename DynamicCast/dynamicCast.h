@@ -27,7 +27,7 @@ namespace dynamicCast {
 
 		struct ClassesRelationship {
 			enum {
-				PARENT, VIRTUAL_PARENT, NOT_RELATIONSHIP, AMBIGUOUS
+				PARENT, VIRTUAL_PARENT, NOT_RELATIONSHIP, AMBIGUOUS, SAME
 			} state;
 			size_t offset;
 		};
@@ -54,10 +54,13 @@ namespace dynamicCast {
 	}
 
 
+	class badCastException {};
+
+
 	template<class T1, class T2>
 	T1* my_dynamic_cast(T2*);
 
 
 	template<class T1, class T2>
-	T1& my_dynamic_cast(T2&);
+	T1& my_dynamic_cast(T2&) throw(badCastException);
 }

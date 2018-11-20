@@ -5,7 +5,12 @@ namespace dynamicCast {
 
 	typedef VirtualTable::ClassesRelationship vtcr;
 
+	map<string, list<ClassParentData>> VirtualTable::data;
+
 	vtcr VirtualTable::getRelationship(string derivativeClassName, string baseClassName) {
+		if (baseClassName.compare(derivativeClassName) == 0) {
+			return {vtcr::SAME, 0};
+		}
 		list<ClassParentData> immediateParents = VirtualTable::data[derivativeClassName];
 		vtcr relationshipBuffer = {vtcr::NOT_RELATIONSHIP , 0};
 		
@@ -22,7 +27,8 @@ namespace dynamicCast {
 			}
 
 			if ((relationshipBuffer.state == vtcr::VIRTUAL_PARENT) && 
-				((parentRelationship.state != vtcr::NOT_RELATIONSHIP || (parentRelationship.state != vtcr::VIRTUAL_PARENT)))) {
+				(parentRelationship.state != vtcr::NOT_RELATIONSHIP) && 
+				(parentRelationship.state != vtcr::VIRTUAL_PARENT)) {
 				relationshipBuffer.state = vtcr::AMBIGUOUS;
 			}
 
