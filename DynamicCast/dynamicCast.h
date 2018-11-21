@@ -85,9 +85,7 @@ namespace dynamicCast {
 
 
 	template<class T1, class T2>
-	T1* my_dynamic_cast(T2*);
-
-
-	template<class T1, class T2>
-	T1& my_dynamic_cast(T2&) throw(badCastException);
+	T1 my_dynamic_cast(T2) throw(badCastException);
 }
+
+#include "dynamicCast.hpp"
