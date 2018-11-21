@@ -53,6 +53,7 @@ namespace dynamicCast {
 	template<class T1, class T2>
 	T1 my_dynamic_cast_reference(T2 obj) throw(badCastException) {
 
+		size_t seftOffset = VirtualTable::getRelationship(obj->getTypeName(), typeid(T2).name()).offset;
 		vtcr trueRelationship = VirtualTable::getRelationship(obj->getTypeName(), typeid(std::remove_reference<T1>::type).name());	//TODO: check if -> work
 		vtcr relationship = VirtualTable::getRelationship(typeid(std::remove_reference<T1>::type).name(), obj->getTypeName());		//similarly
 
@@ -66,21 +67,21 @@ namespace dynamicCast {
 			break;
 
 		case vtcr::PARENT:
-			return reinterpret_cast<T1>(reinterpret_cast<char*>(obj) - trueRelationship.offset);
+			return reinterpret_cast<T1>(reinterpret_cast<char*>(obj) + trueRelationship.offset - seftOffset);
 			break;
 
 		case vtcr::VIRTUAL_PARENT:
-			return reinterpret_cast<T1>(reinterpret_cast<char*>(obj) - trueRelationship.offset); //TODO: offset calculation
+			return reinterpret_cast<T1>(reinterpret_cast<char*>(obj) + trueRelationship.offset - seftOffset); //TODO: offset calculation
 			break;
 
 		case vtcr::AMBIGUOUS:
 			if (relationship.state == vtcr::PARENT) {
-				return reinterpret_cast<T1>(reinterpret_cast<char*>(obj) - relationship.offset);
+				return reinterpret_cast<T1>(reinterpret_cast<char*>(obj) + relationship.offset);
 			}
 			break;
 		}
+
 		throw badCastException();
-		//return (T1) obj;
 	}
 
 
