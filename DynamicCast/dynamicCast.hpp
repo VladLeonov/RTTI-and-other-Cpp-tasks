@@ -16,12 +16,12 @@ namespace dynamicCast {
 		vtcr relationship = VirtualTable::getRelationship(typeid(std::remove_reference<T1>::type).name(), obj.getTypeName());
 
 		if (relationship.state == vtcr::SAME) {
-			return (T1)obj;
+			return reinterpret_cast<T1>(obj);
 		}
 
 		switch (trueRelationship.state) {
 		case vtcr::SAME:
-			return (T1)obj;
+			return reinterpret_cast<T1>(obj);
 			break;
 
 		case vtcr::PARENT:
@@ -61,12 +61,12 @@ namespace dynamicCast {
 		vtcr relationship = VirtualTable::getRelationship(typeid(std::remove_pointer<T1>::type).name(), ptr->getTypeName());
 
 		if (relationship.state == vtcr::SAME) {
-			return (T1)ptr;
+			return reinterpret_cast<T1>(ptr);
 		}
 
 		switch (trueRelationship.state) {
 		case vtcr::SAME:
-			return (T1)ptr;
+			return reinterpret_cast<T1>(ptr);
 			break;
 
 		case vtcr::PARENT:
