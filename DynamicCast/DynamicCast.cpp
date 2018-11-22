@@ -17,7 +17,7 @@ namespace dynamicCast {
 		for (auto i = immediateParents.begin(); i != immediateParents.end(); i++) {
 			vtcr parentRelationship;
 			if (baseClassName.compare(i->typeName) == 0) {
-				parentRelationship = { i->isInheritedVirtually ? vtcr::VIRTUAL_PARENT : vtcr::PARENT, i->offset };
+				parentRelationship = { i->isInheritedVirtually ? vtcr::VIRTUAL_PARENT : vtcr::PARENT, 0 };
 			} else {
 				parentRelationship = getRelationship(i->typeName, baseClassName);
 			}
@@ -33,7 +33,10 @@ namespace dynamicCast {
 			}
 
 			if (relationshipBuffer.state == vtcr::NOT_RELATIONSHIP) {
-				relationshipBuffer = parentRelationship;				//TODO: offset calculation
+				relationshipBuffer.state = parentRelationship.state;
+				if (parentRelationship.state == vtcr::PARENT) {
+					relationshipBuffer.offset = parentRelationship.offset + i->offset;
+				}
 			}
 
 			if (relationshipBuffer.state == vtcr::AMBIGUOUS) {
