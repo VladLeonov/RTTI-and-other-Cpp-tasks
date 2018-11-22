@@ -66,7 +66,7 @@ namespace dynamicCast {
 			break;
 
 		case vtcr::VIRTUAL_PARENT:
-			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) + trueRelationship.offset - seftOffset); //wrong offset calculation
+			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) + trueRelationship.offset - seftOffset); //TODO: offset calculation
 			break;
 
 		case vtcr::AMBIGUOUS:
