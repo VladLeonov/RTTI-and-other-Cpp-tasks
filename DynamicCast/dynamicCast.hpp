@@ -8,10 +8,10 @@ namespace dynamicCast {
 
 	template<class T1, class T2>
 	T1 my_dynamic_cast(T2& obj) throw(badCastException) {
-		T2* p = &obj;
+
 		static_assert(std::is_reference<T1>::value, "Template parameters must be either pointers or references");
 
-		size_t seftOffset = VirtualTable::getRelationship(obj.getTypeName(), typeid(T2).name()).offset;
+		size_t selfOffset = VirtualTable::getRelationship(obj.getTypeName(), typeid(T2).name()).offset;
 		vtcr trueRelationship = VirtualTable::getRelationship(obj.getTypeName(), typeid(std::remove_reference<T1>::type).name());
 		vtcr relationship = VirtualTable::getRelationship(typeid(T2).name(), typeid(std::remove_reference<T1>::type).name());
 
@@ -21,11 +21,11 @@ namespace dynamicCast {
 			break;
 
 		case vtcr::PARENT:
-			return *(reinterpret_cast<typename std::remove_reference<T1>::type*>(reinterpret_cast<char*>(&obj) + trueRelationship.offset - seftOffset));
+			return *(reinterpret_cast<typename std::remove_reference<T1>::type*>(reinterpret_cast<char*>(&obj) + trueRelationship.offset - selfOffset));
 			break;
 
 		case vtcr::VIRTUAL_PARENT:
-			return *(reinterpret_cast<typename std::remove_reference<T1>::type*>(reinterpret_cast<char*>(&obj) + trueRelationship.offset - seftOffset)); //TODO: offset calculation
+			return *(reinterpret_cast<typename std::remove_reference<T1>::type*>(reinterpret_cast<char*>(&obj) + trueRelationship.offset - selfOffset)); //TODO: offset calculation
 			break;
 
 		case vtcr::AMBIGUOUS:
@@ -47,10 +47,10 @@ namespace dynamicCast {
 			return (T1) nullptr;
 		}
 
-		size_t seftOffset = VirtualTable::getRelationship(ptr->getTypeName(), typeid(T2).name()).offset;
+		size_t selfOffset = VirtualTable::getRelationship(ptr->getTypeName(), typeid(T2).name()).offset;
 
 		if (std::is_same<void*, typename std::remove_cv<T1>::type>::value) {
-			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) - seftOffset);
+			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) - selfOffset);
 		}
 
 		vtcr trueRelationship = VirtualTable::getRelationship(ptr->getTypeName(), typeid(std::remove_pointer<T1>::type).name());
@@ -62,11 +62,11 @@ namespace dynamicCast {
 			break;
 
 		case vtcr::PARENT:
-			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) + trueRelationship.offset - seftOffset);
+			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) + trueRelationship.offset - selfOffset);
 			break;
 
 		case vtcr::VIRTUAL_PARENT:
-			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) + trueRelationship.offset - seftOffset); //TODO: offset calculation
+			return reinterpret_cast<T1>(reinterpret_cast<char*>(ptr) + trueRelationship.offset - selfOffset); //TODO: offset calculation
 			break;
 
 		case vtcr::AMBIGUOUS:
