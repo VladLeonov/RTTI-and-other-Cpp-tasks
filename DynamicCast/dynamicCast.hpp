@@ -13,11 +13,7 @@ namespace dynamicCast {
 
 		size_t seftOffset = VirtualTable::getRelationship(obj.getTypeName(), typeid(T2).name()).offset;
 		vtcr trueRelationship = VirtualTable::getRelationship(obj.getTypeName(), typeid(std::remove_reference<T1>::type).name());
-		vtcr relationship = VirtualTable::getRelationship(typeid(std::remove_reference<T1>::type).name(), obj.getTypeName());
-
-		if (relationship.state == vtcr::SAME) {
-			return reinterpret_cast<T1>(obj);
-		}
+		vtcr relationship = VirtualTable::getRelationship(typeid(T2).name(), typeid(std::remove_reference<T1>::type).name());
 
 		switch (trueRelationship.state) {
 		case vtcr::SAME:
@@ -58,11 +54,7 @@ namespace dynamicCast {
 		}
 
 		vtcr trueRelationship = VirtualTable::getRelationship(ptr->getTypeName(), typeid(std::remove_pointer<T1>::type).name());
-		vtcr relationship = VirtualTable::getRelationship(typeid(std::remove_pointer<T1>::type).name(), ptr->getTypeName());
-
-		if (relationship.state == vtcr::SAME) {
-			return reinterpret_cast<T1>(ptr);
-		}
+		vtcr relationship = VirtualTable::getRelationship(typeid(T2).name(), typeid(std::remove_pointer<T1>::type).name());
 
 		switch (trueRelationship.state) {
 		case vtcr::SAME:
